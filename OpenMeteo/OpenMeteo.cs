@@ -1,6 +1,7 @@
-﻿namespace OpenMeteo;
+﻿namespace OpenMeteo {
+    public class OpenMeteo
+    {
 
-public class OpenMeteo
-{
-
+    }   
 }
+

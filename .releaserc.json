@@ -1,0 +1,51 @@
+{
+    "pkgRoot": "dist_ts",
+    "branches": [
+        "main"
+    ],
+    "plugins": [
+        [
+            "@semantic-release/commit-analyzer",
+            {
+                "preset": "conventionalcommits",
+                "releaseRules": [
+                    {
+                        "type": "build",
+                        "scope": "deps",
+                        "release": "patch"
+                    }
+                ]
+            }
+        ],
+        [
+            "@semantic-release/release-notes-generator",
+            {
+                "preset": "conventionalcommits",
+                "presetConfig": {
+                    "types": [
+                        {
+                            "type": "feat",
+                            "section": "Features"
+                        },
+                        {
+                            "type": "fix",
+                            "section": "Bug Fixes"
+                        },
+                        {
+                            "type": "build",
+                            "section": "Dependencies and Other Build Updates",
+                            "hidden": false
+                        }
+                    ]
+                }
+            }
+        ],
+        "@droidsolutions-oss/semantic-release-nuget",
+        "@semantic-release/git",
+        "@semantic-release/github"
+    ],
+    "includeSymbols": true,
+    "includeSource": true,
+    "projectPath": "OpenMeteo/OpenMeteo.csproj",
+    "usePackageVersion": true
+}

@@ -1,9 +1,27 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
+    <TargetFrameworks>netstandard2.1;net6.0;net8.0</TargetFrameworks>
     <Nullable>enable</Nullable>
+    <PackageId>OpenMeteo</PackageId>
+    <Description>Decode Open-Meteo Weather API responses based on FlatBuffers</Description>
+    <!--<Version>1.10.0</Version>-->
+    <Authors>Patrick Zippenfenig</Authors>
+    <Company>Open-Meteo.com</Company>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RepositoryUrl>https://github.com/open-meteo/dotnet.git</RepositoryUrl>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <RepositoryType>git</RepositoryType>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Google.FlatBuffers" Version="24.*" />
+    <PackageReference Include="openmeteo_sdk" Version="1.11.3" />
+  </ItemGroup>
+
+    <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)../LICENSE" Pack="true" PackagePath=""/>
+    <None Include="$(MSBuildThisFileDirectory)../README.md" Pack="true" PackagePath=""/>
+  </ItemGroup>
 </Project>

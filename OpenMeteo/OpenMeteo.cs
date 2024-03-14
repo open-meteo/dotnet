@@ -104,5 +104,18 @@ namespace OpenMeteo
             return response;
         }
     }
+
+    /*public static class VariablesWithTimeExtension {
+        /// <summary>
+        /// Iterate over timestamps
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static IEnumerable<DateTimeOffset> DateTimeEnumerator(this VariablesWithTime value)
+        {
+            for (var time = value.Time; time < value.TimeEnd; time += value.Interval)
+                yield return DateTimeOffset.FromUnixTimeSeconds(time);
+        }
+    }*/
 }
 

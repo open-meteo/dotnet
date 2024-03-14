@@ -32,6 +32,8 @@ jobs:
           npm config set access public
       - name: Release
         env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_ACTOR: ${{ github.actor }}
           NUGET_TOKEN: ${{ secrets.NUGET_TOKEN }}
         run: |
           npx semantic-release

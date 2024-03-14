@@ -1,23 +1,38 @@
 ﻿using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Collections.Generic;
+using System;
 using openmeteo_sdk;
 using Google.FlatBuffers;
 
 namespace OpenMeteo
 {
-    public class OpenMeteo
+    public class OpenMeteoClient
     {
         private HttpClient Client;
 
-        public OpenMeteo(HttpClient client)
+        public OpenMeteoClient(HttpClient client)
         {
             this.Client = client;
         }
 
-        public OpenMeteo()
+        public OpenMeteoClient()
         {
             this.Client = new HttpClient(new RetryHandler(new HttpClientHandler()));
+        }
+
+        /// <summary>
+        /// Fetch weather data from an Open-Meteo API endpoint and decode messages using FlatBuffers
+        /// </summary>
+        /// <param name="uri"></param>
+        /// <returns></returns>
+        public async Task<WeatherApiResponse[]> GetWeather(Uri uri)
+        {
+            var response = await Client.GetAsync(uri);
+            response.EnsureSuccessStatusCode();
+            var bytes = await response.Content.ReadAsByteArrayAsync();
+            return DecodeWeatherResponses(bytes);
         }
 
         /// <summary>
@@ -25,7 +40,7 @@ namespace OpenMeteo
         /// </summary>
         /// <param name="bytes"></param>
         /// <returns></returns>
-        public static WeatherApiResponse[] decodeWeatherResponse(byte[] bytes)
+        public static WeatherApiResponse[] DecodeWeatherResponses(byte[] bytes)
         {
             var buffer = new ByteBuffer(bytes);
 
@@ -62,6 +77,9 @@ namespace OpenMeteo
     public class RetryHandler : DelegatingHandler
     {
         private const int MaxRetries = 3;
+        private const double BackoffFactor = 0.5;
+        private const int BackoffMaxSeconds = 2;
+
 
         public RetryHandler(HttpMessageHandler innerHandler)
             : base(innerHandler)
@@ -80,8 +98,9 @@ namespace OpenMeteo
                 {
                     return response;
                 }
+                int waitMs = (int)Math.Min(BackoffFactor * Math.Pow(2, i), BackoffMaxSeconds) * 1000;
+                await Task.Delay(waitMs);
             }
-
             return response;
         }
     }

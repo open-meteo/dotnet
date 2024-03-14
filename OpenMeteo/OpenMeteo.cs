@@ -19,7 +19,10 @@ namespace OpenMeteo
 
         public OpenMeteoClient()
         {
-            this.Client = new HttpClient(new RetryHandler(new HttpClientHandler()));
+            HttpClientHandler handler = new HttpClientHandler();
+            handler.AutomaticDecompression = System.Net.DecompressionMethods.Deflate | System.Net.DecompressionMethods.GZip;
+            this.Client = new HttpClient(new RetryHandler(handler));
+            this.Client.DefaultRequestHeaders.TryAddWithoutValidation("Accept-Encoding", "gzip, deflate");
         }
 
         /// <summary>

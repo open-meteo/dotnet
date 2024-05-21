@@ -47,28 +47,28 @@ namespace OpenMeteo
         {
             var buffer = new ByteBuffer(bytes);
 
-            // Get number of total weather response messages
+            // For clarification
+            var SkipLengthField = sizeof(int);
+
             var total = 0;
             while (buffer.Position < buffer.Length)
             {
                 var length = buffer.GetInt(buffer.Position);
-                buffer.Position += length;
-                total += 1;
+                buffer.Position += SkipLengthField + length;
+                total++;
             }
 
-            // Prepare output array
+            // Allocate a fixed size array for output
             var results = new WeatherApiResponse[total];
-            var i = 0;
-            buffer.Position = 0;
 
-            // Fill messages in array
-            while (buffer.Position < buffer.Length)
+            // Start over in the buffer and fill in the results array
+            buffer.Position = 0;
+            for (var i = 0; buffer.Position < buffer.Length; i++)
             {
                 var length = buffer.GetInt(buffer.Position);
-                buffer.Position += 4;
+                buffer.Position += SkipLengthField;
                 results[i] = WeatherApiResponse.GetRootAsWeatherApiResponse(buffer);
                 buffer.Position += length;
-                i += 1;
             }
             return results;
         }

@@ -96,29 +96,30 @@ namespace OpenMeteo
             HttpResponseMessage response = null;
             for (int i = 0; i < MaxRetries; i++)
             {
+                response?.Dispose();
                 response = await base.SendAsync(request, cancellationToken);
                 if (response.IsSuccessStatusCode)
                 {
                     return response;
                 }
+                if ((int)response.StatusCode < 500)
+                {
+                    return response;
+                }
                 int waitMs = (int)Math.Min(BackoffFactor * Math.Pow(2, i), BackoffMaxSeconds) * 1000;
-                await Task.Delay(waitMs);
+                try
+                {
+                    await Task.Delay(waitMs, cancellationToken);
+                }
+                catch (OperationCanceledException)
+                {
+                    response.Dispose();
+                    throw;
+                }
             }
             return response;
         }
     }
 
-    /*public static class VariablesWithTimeExtension {
-        /// <summary>
-        /// Iterate over timestamps
-        /// </summary>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        public static IEnumerable<DateTimeOffset> DateTimeEnumerator(this VariablesWithTime value)
-        {
-            for (var time = value.Time; time < value.TimeEnd; time += value.Interval)
-                yield return DateTimeOffset.FromUnixTimeSeconds(time);
-        }
-    }*/
 }
 
